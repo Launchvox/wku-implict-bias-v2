@@ -12,10 +12,10 @@
     <script type="text/javascript" src="master-client.js"></script>
 </head>
 <body>
-    <h1><b id="masterclientmark"></b>Pairs Demo (Master Client)</h1>
+    <h1><b id="masterclientmark"></b>Training App</h1>
     <div id="fb-root"></div>
     <script>
-        if (DemoFbAppId) {
+        if (FbAppId) {
             window.fbAsyncInit = function () {
                 window.onFbLoginClick = function () {
                     var onLogin = function (response) {
@@ -49,7 +49,7 @@
                 var js, fjs = d.getElementsByTagName(s)[0];
                 if (d.getElementById(id)) return;
                 js = d.createElement(s); js.id = id;
-                js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=" + DemoFbAppId;
+                js.src = "https://connect.facebook.net/en_US/all.js#xfbml=1&appId=" + FbAppId;
                 fjs.parentNode.insertBefore(js, fjs);
             }(document, 'script', 'facebook-jssdk'));
             

@@ -1,5 +1,5 @@
 // Game logic runs on one of the conected clients - master client~
-// Server Lua Extension Scripts port (see demo-pairs)
+// Server Lua Extension Scripts port (see App-pairs)
 // map and mapProgress arrays start for 1 because of lua origial source (and may be compatibility)
 var GameProperties = {
     variety: 8,
@@ -126,7 +126,7 @@ var MasterClient = /** @class */ (function () {
             var a = actors[n];
             if (a.actorNr !== actor.actorNr && a.getCustomProperty("id") === id) {
                 var msg = "Player " + id + " already connected";
-                this.broadcast(DemoConstants.EvDisconnectOnAlreadyConnected, null, { targetActors: [actor.actorNr] });
+                this.broadcast(AppConstants.EvDisconnectOnAlreadyConnected, null, { targetActors: [actor.actorNr] });
                 this.logger.info("onPlayerJoin", msg);
                 return;
             }
@@ -157,10 +157,10 @@ var MasterClient = /** @class */ (function () {
             return;
         this.cacheProps();
         switch (code) {
-            case DemoConstants.EvClick:
+            case AppConstants.EvClick:
                 this.OnMoveEvent(actorNr, code, content);
                 break;
-            case DemoConstants.EvNewGame:
+            case AppConstants.EvNewGame:
                 this.OnNewGameEvent(actorNr, code, content);
                 break;
         }
@@ -232,29 +232,29 @@ var MasterClient = /** @class */ (function () {
                         else {
                             this.state.click1 = card;
                         }
-                        this.broadcast(DemoConstants.EvShowCards, data);
+                        this.broadcast(AppConstants.EvShowCards, data);
                         this.flushPropsFlag = true;
                     }
                     else {
-                        this.broadcast(DemoConstants.EvClickDebug, { msg: "Card " + card + " is shown currently" }, { targetActors: [actorNr] });
+                        this.broadcast(AppConstants.EvClickDebug, { msg: "Card " + card + " is shown currently" }, { targetActors: [actorNr] });
                     }
                 }
                 else {
-                    this.broadcast(DemoConstants.EvClickDebug, { msg: "Card " + card + " already opened" }, { targetActors: [actorNr] });
+                    this.broadcast(AppConstants.EvClickDebug, { msg: "Card " + card + " already opened" }, { targetActors: [actorNr] });
                 }
             }
             else {
-                this.broadcast(DemoConstants.EvClickDebug, { msg: "Card " + card + " is out of range" }, { targetActors: [actorNr] });
+                this.broadcast(AppConstants.EvClickDebug, { msg: "Card " + card + " is out of range" }, { targetActors: [actorNr] });
             }
         }
         else {
-            this.broadcast(DemoConstants.EvClickDebug, { msg: "Not your turn" }, { targetActors: [actorNr] });
+            this.broadcast(AppConstants.EvClickDebug, { msg: "Not your turn" }, { targetActors: [actorNr] });
         }
     };
     MasterClient.prototype.ResetShownCards = function (click1) {
         //timer.stop(user.clickTimer)
         //this.state.clickTimer = nil
-        this.broadcast(DemoConstants.EvHideCards, { cards: [this.state.click1, this.state.click2] });
+        this.broadcast(AppConstants.EvHideCards, { cards: [this.state.click1, this.state.click2] });
         this.state.click1 = click1;
         this.state.click2 = null;
     };
@@ -326,7 +326,7 @@ var MasterClient = /** @class */ (function () {
         var id = actors[actorNr].getCustomProperty("id");
         this.logger.info("New Game request from " + id);
         var trivial = data && data.trivial;
-        this.broadcast(DemoConstants.EvHideCards, { all: true }); // hide cards
+        this.broadcast(AppConstants.EvHideCards, { all: true }); // hide cards
         // put all online players in game
         var players = new Array();
         for (var a in actors) {
