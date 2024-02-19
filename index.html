@@ -8,8 +8,11 @@
     <script type="text/javascript" src="3rdparty/easeljs.min.js"></script>
     <!--lib--><script type="text/javascript" src="Photon/Photon-Javascript_SDK.js"></script>
     <!--info (optional)--><script type="text/javascript" src="cloud-app-info.js"></script>
-    <script type="text/javascript" src="app.js"></script>
-    <script type="text/javascript" src="master-client.js"></script>
+    <script type="text/javascript" src="src/globals.js"></script>
+    <script type="text/javascript" src="src/app.js"></script>
+    <script type="text/javascript" src="src/app-player.js"></script>
+    <script type="text/javascript" src="src/app-room.js"></script>
+    <script type="text/javascript" src="src/main-client.js"></script>
 </head>
 <body>
     <h1><b id="masterclientmark"></b>Training App</h1>
@@ -23,7 +26,7 @@
                             FB.api('/me', function(meResp) {
                                 var id = "fb:" + response.authResponse.userID;
                                 loadBalancingClient.myActor().setInfo(id, meResp.name);
-                                this.connectToRegionMaster("EU");
+                                this.connectToRegionMaster("US");
                         });
                         } else {
                             console.log('User cancelled login or did not fully authorize.');
@@ -65,16 +68,22 @@
         <form>
             Name:<input type="text" id="playername" />
             <input type="submit" value="Connect" id="connectbtn" autofocus="autofocus" />
-        </form>        
+        </form>
+        <form>
+            Room:<input type="text" id="newroom" />
+            <input type="submit" value="Make New Room" id="newroombtn" autofocus="autofocus" />
+        </form>          
         <div>
             <button id="fblogin" onclick="onFbLoginClick()">FB Login</button>
             <button id="disconnectbtn">Disconnect</button>
         </div>
+         
+        <button id="listRooms">List Rooms</button>
         <button id="newgame">New Game</button>
         <button id="newtrivial">New Trivial</button>        
         Next Player:
         <div id="nextplayer"></div>
-        <br/>PLayers Online:
+        <br/>Players Online:
         <ul id="playeronlinelist">
             <li>none</li>
         </ul>
@@ -86,9 +95,5 @@
         <div id="gamestate"></div>
         <div id="log"></div>
     </div>
-    <script>
-        document.getElementById("playername").focus()
-    </script>
-
 </body>
 </html>

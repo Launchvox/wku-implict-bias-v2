@@ -1,18 +1,4 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+
 // For Photon Cloud Application access create cloud-app-info.js file in the root directory (next to default.html) and place next lines in it:
 //var AppInfo = {
 //    AppId: "your app id",
@@ -247,11 +233,21 @@ var App = /** @class */ (function (_super) {
         this.updatePlayerOnlineList();
     };
     // tools
-    App.prototype.createAppRoom = function () {
-        Output.log("New Game");
+    App.prototype.createAppRoom = function (name) {
+        if(name == null)
+        {
+            name = "Welfare Training (Default)"
+        }
+        Output.log("New Room");
         this.myRoom().setEmptyRoomLiveTime(10000);
-        this.createRoomFromMy("AppPairsGame (Master Client)");
+        this.createRoomFromMy(name);
     };
+    //Ian Berget: Adding list rooms capability vv
+    App.prototype.listAvailableRooms = function () {
+        console.log("List rooms:");
+        console.log(this.availableRooms());
+    };
+    // Ian Berget: Block End ^^
     App.prototype.setupScene = function () {
         this.shownCards = [];
         this.stage.removeAllChildren();
@@ -325,13 +321,27 @@ var App = /** @class */ (function (_super) {
             // clients set actors's id
             _this.myActor().setInfo(id, n.value);
             _this.myActor().setCustomProperty("auth", { name: n.value });
-            _this.connectToRegionMaster("EU");
+            _this.connectToRegionMaster("US");
         };
         btn = document.getElementById("disconnectbtn");
         btn.onclick = function (ev) {
             _this.disconnect();
             return false;
         };
+        //Ian Berget: Additions here
+        btn.onclick = function (ev) {
+            var n = document.getElementById("newroom");
+            //                this.myActor().setName(n.value);
+            var id = "n:" + n.value;
+            // clients set actors's id
+            _this.createAppRoom("US");
+        };
+        btn = document.getElementById("listRooms");
+        btn.onclick = function (ev) {
+            _this.listAvailableRooms();
+            return false;
+        };
+        ///
         btn = document.getElementById("newgame");
         btn.onclick = function (ev) {
             _this.raiseEventAll(AppConstants.EvNewGame, null);
@@ -396,110 +406,6 @@ var Output = /** @class */ (function () {
     Output.logger = new Exitgames.Common.Logger();
     return Output;
 }());
-var AppRoom = /** @class */ (function (_super) {
-    __extends(AppRoom, _super);
-    function AppRoom(App, name) {
-        var _this = _super.call(this, name) || this;
-        _this.App = App;
-        // acceess properties every time
-        _this.variety = 0;
-        _this.columnCount = 0;
-        _this.iconUrls = {};
-        _this.icons = {};
-        _this.variety = GameProperties.variety;
-        _this.columnCount = GameProperties.columnCount;
-        _this.iconUrls = GameProperties.icons;
-        return _this;
-    }
-    AppRoom.prototype.rowCount = function () {
-        return Math.ceil(2 * this.variety / this.columnCount);
-    };
-    AppRoom.prototype.iconUrl = function (i) {
-        return this.iconUrls[i];
-    };
-    AppRoom.prototype.icon = function (i) {
-        return this.icons[i];
-    };
-    AppRoom.prototype.onPropertiesChange = function (changedCustomProps, byClient) {
-        //case AppConstants.EvGameStateUpdate:
-        if (changedCustomProps.game) {
-            var game = this.getCustomProperty("game");
-            var t = document.getElementById("gamestate");
-            t.textContent = JSON.stringify(game);
-            t = document.getElementById("nextplayer");
-            t.textContent = "";
-            var turnsLeft = 0;
-            for (var i = 0; i < game.nextPlayerList.length; i++) {
-                if (turnsLeft == 0 && game.nextPlayerList[i] == this.App.myActor().getId()) {
-                    turnsLeft = i;
-                }
-                t.textContent += " " + game.nextPlayerList[i];
-            }
-            var t = document.getElementById("info");
-            t.textContent = turnsLeft == 0 ? "Your turn now!" : "Wait " + turnsLeft + " turn(s)";
-            if (game.nextPlayer == this.App.myActor().getId()) {
-                this.App.updateAutoplay(this.App);
-            }
-        }
-        // case AppConstants.EvPlayersUpdate:
-        if (changedCustomProps.game || changedCustomProps.playersStats) {
-            var game = this.getCustomProperty("game");
-            var playersStats = this.getCustomProperty("playersStats") || {};
-            var list = document.getElementById("players");
-            while (list.firstChild) {
-                list.removeChild(list.firstChild);
-            }
-            for (var i_1 in game.players) {
-                var id = game.players[i_1];
-                var item = document.createElement("li");
-                item.attributes["value"] = id;
-                var d = game.playersData[id];
-                var s = playersStats && playersStats[id];
-                item.textContent = d.name + " / " + id + ": " + d.hitCount + " / " + (d.hitCount + d.missCount) + (s ? " [" + s.hitCount + " / " + (s.hitCount + s.missCount) + " / " + s.gamesPlayed + "]" : "");
-                item.title = "Player id: " + id + ", name: " + d.name + "\nCurrent game: hits = " + d.hitCount + ", clicks = " + (d.hitCount + d.missCount) + (s ? "\n Totals: games played = " + s.gamesPlayed + ", hits = " + s.hitCount + ", clicks = " + (s.hitCount + s.missCount) : "");
-                list.appendChild(item);
-            }
-        }
-    };
-    AppRoom.prototype.loadResources = function (stage) {
-        for (var i = 0; i < this.variety; ++i) {
-            var img = new Image();
-            this.icons[i] = img;
-            img.onload = function () {
-                Output.log("Image " + img.src + " loaded");
-                stage.update();
-            };
-            img.src = this.iconUrl(i);
-        }
-    };
-    return AppRoom;
-}(Photon.LoadBalancing.Room));
-var AppPlayer = /** @class */ (function (_super) {
-    __extends(AppPlayer, _super);
-    function AppPlayer(App, name, actorNr, isLocal) {
-        var _this = _super.call(this, name, actorNr, isLocal) || this;
-        _this.App = App;
-        return _this;
-    }
-    AppPlayer.prototype.getId = function () {
-        return this.getCustomProperty("id");
-    };
-    AppPlayer.prototype.getName = function () {
-        return this.getCustomProperty("name");
-    };
-    AppPlayer.prototype.onPropertiesChange = function (changedCustomProps) {
-        if (this.isLocal) {
-            document.title = this.getName() + " / " + this.getId() + " Pairs Game (Master Client)";
-        }
-        this.App.updatePlayerOnlineList();
-    };
-    AppPlayer.prototype.setInfo = function (id, name) {
-        this.App.setUserId(id);
-        this.setCustomProperty("id", id);
-        this.setCustomProperty("name", name);
-    };
-    return AppPlayer;
-}(Photon.LoadBalancing.Actor));
 var loadBalancingClient;
 window.onload = function () {
     loadBalancingClient = new App(document.getElementById("canvas"));
