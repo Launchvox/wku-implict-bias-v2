@@ -161,7 +161,8 @@ var App = /** @class */ (function (_super) {
         stateText.textContent = LBC.StateToName(state);
         switch (state) {
             case LBC.State.JoinedLobby:
-                this.joinRandomRoom();
+                //Ian Berget: Disabling to allow joining explicitly.
+                //this.joinRandomRoom();
                 break;
             default:
                 break;
@@ -234,19 +235,33 @@ var App = /** @class */ (function (_super) {
     };
     // tools
     App.prototype.createAppRoom = function (name) {
-        if(name == null)
-        {
-            name = "Welfare Training (Default)"
-        }
-        Output.log("New Room");
+        //Ian Berget: This code block is uncessary, as it will generate a random room when the name is blank.
+        //if(name == null)
+        //{
+        //    name = "Welfare Training (Default)"
+        //}
+        Output.log("New Room: " + name);
         this.myRoom().setEmptyRoomLiveTime(10000);
         this.createRoomFromMy(name);
+        //Ian Berget: Tried this but prevent connecting to random existing game
+        //this.createRoomFromMy(name,{lobbyName:"MainLobby"});
     };
     //Ian Berget: Adding list rooms capability vv
     App.prototype.listAvailableRooms = function () {
         console.log("List rooms:");
         console.log(this.availableRooms());
     };
+    App.prototype.joinLobby = function (uuid) {
+        var n = document.getElementById("playername");
+        //                this.myActor().setName(n.value);
+        var id = "n:" + n.value;
+        //Ian Berget: Confirming that player name does not matter by removing it.
+        id = "n:" + uuid;
+        // clients set actors's id
+        this.myActor().setInfo(id, n.value);
+        this.myActor().setCustomProperty("auth", { name: n.value });
+        this.connectToRegionMaster("US");
+    }
     // Ian Berget: Block End ^^
     App.prototype.setupScene = function () {
         this.shownCards = [];
@@ -314,28 +329,28 @@ var App = /** @class */ (function (_super) {
         var cb = document.getElementById("autoplay");
         cb.onchange = function () { return _this.updateAutoplay(_this); };
         var btn = document.getElementById("connectbtn");
-        btn.onclick = function (ev) {
-            var n = document.getElementById("playername");
-            //                this.myActor().setName(n.value);
-            var id = "n:" + n.value;
-            // clients set actors's id
-            _this.myActor().setInfo(id, n.value);
-            _this.myActor().setCustomProperty("auth", { name: n.value });
-            _this.connectToRegionMaster("US");
-        };
+        btn.onclick = function (ev) {_this.joinLobby();};
         btn = document.getElementById("disconnectbtn");
         btn.onclick = function (ev) {
             _this.disconnect();
             return false;
         };
         //Ian Berget: Additions here
+        btn = document.getElementById("joinRoomBtn");
         btn.onclick = function (ev) {
             var n = document.getElementById("newroom");
             //                this.myActor().setName(n.value);
             var id = "n:" + n.value;
             // clients set actors's id
-            _this.createAppRoom("US");
+            _this.createAppRoom(id);
         };
+
+        btn = document.getElementById("joinRandomBtn");
+        btn.onclick = function (ev) {
+            _this.joinRandomRoom();
+            return false;
+        };
+
         btn = document.getElementById("listRooms");
         btn.onclick = function (ev) {
             _this.listAvailableRooms();
@@ -410,4 +425,8 @@ var loadBalancingClient;
 window.onload = function () {
     loadBalancingClient = new App(document.getElementById("canvas"));
     loadBalancingClient.start();
+
+    //Ian Berget: Attempting to auto-join the lobby with a unique id.
+    const uuid = self.crypto.randomUUID();
+    loadBalancingClient.joinLobby(uuid);
 };
