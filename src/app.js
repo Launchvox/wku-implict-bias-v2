@@ -78,6 +78,9 @@ var App = /** @class */ (function (_super) {
         this.masterClient.onOperationResponse(errorCode, errorMsg, code, content);
         if (errorCode) {
             switch (code) {
+                case Photon.LoadBalancing.Constants.OperationCode.JoinedLobby:
+                    this.listAvailableRooms();
+                    break;
                 case Photon.LoadBalancing.Constants.OperationCode.JoinRandomGame:
                     switch (errorCode) {
                         case Photon.LoadBalancing.Constants.ErrorCode.NoRandomMatchFound:
@@ -377,11 +380,6 @@ var App = /** @class */ (function (_super) {
             return false;
         };
 
-        btn = document.getElementById("listRooms");
-        btn.onclick = function (ev) {
-            _this.listAvailableRooms();
-            return false;
-        };
         ///
         btn = document.getElementById("newgame");
         btn.onclick = function (ev) {
@@ -455,4 +453,10 @@ window.onload = function () {
     //Ian Berget: Attempting to auto-join the lobby with a unique id.
     const uuid = self.crypto.randomUUID();
     loadBalancingClient.joinLobby(uuid);
+
+    //Every 3 seconds, re-run the listAvailableRooms function.
+    setInterval(function () {
+        loadBalancingClient.listAvailableRooms();
+    },3000)
+
 };
