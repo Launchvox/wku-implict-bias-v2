@@ -235,31 +235,55 @@ var App = /** @class */ (function (_super) {
     };
     // tools
     App.prototype.createAppRoom = function (name) {
-        //Ian Berget: This code block is uncessary, as it will generate a random room when the name is blank.
-        //if(name == null)
-        //{
-        //    name = "Welfare Training (Default)"
-        //}
         Output.log("New Room: " + name);
         this.myRoom().setEmptyRoomLiveTime(10000);
+        Output.log(this.myActor);
         this.createRoomFromMy(name);
-        //Ian Berget: Tried this but prevent connecting to random existing game
-        //this.createRoomFromMy(name,{lobbyName:"MainLobby"});
     };
+    //Ian Berget: Join an existing room, based on the fomrat of the createAppRoom function
+    App.prototype.joinExistingRoom = function (name) {
+            this.joinRoom(name);
+    }
     //Ian Berget: Adding list rooms capability vv
     App.prototype.listAvailableRooms = function () {
+
+        //Store "this" as literal string variable to pass to new element we add to html.
+        const loadBalancer = this;
+
         console.log("List rooms:");
+        const rooms = this.availableRooms();
         console.log(this.availableRooms());
+        //Creates a series of button elements with the id titled roomsSlot
+        //and fill it with buttons whose title comes from the function this.availableRooms();
+        const roomSlot = document.getElementById("roomsSlot");
+        //Remove all children from roomSlot before proceeding
+        while (roomSlot.firstChild) {
+            roomSlot.removeChild(roomSlot.firstChild);
+        }
+
+        for (var i = 0; i < rooms.length; i++) {
+            var button = document.createElement("button");
+            button.id = "button" + i;
+            button.textContent = rooms[i].name;
+            button.addEventListener("click", function () {
+                console.log("Joining room: " + this.textContent);
+                //Ian Berget: Added the following line to join the room.
+                loadBalancer.joinExistingRoom(this.textContent);
+            });
+            roomSlot.appendChild(button);
+        }
     };
     App.prototype.joinLobby = function (uuid) {
-        var n = document.getElementById("playername");
+        //var n = document.getElementById("playername");
         //                this.myActor().setName(n.value);
-        var id = "n:" + n.value;
+        //var id = "n:" + n.value;
         //Ian Berget: Confirming that player name does not matter by removing it.
-        id = "n:" + uuid;
+        var id = "n:" + uuid;
         // clients set actors's id
-        this.myActor().setInfo(id, n.value);
-        this.myActor().setCustomProperty("auth", { name: n.value });
+        //Ian Berget: For now, use the id as the name as well.
+        this.myActor().setInfo(id, id);
+        //this.myActor().setInfo(id, n.value);
+        this.myActor().setCustomProperty("auth", { name: id });
         this.connectToRegionMaster("US");
     }
     // Ian Berget: Block End ^^
@@ -328,9 +352,9 @@ var App = /** @class */ (function (_super) {
         });
         var cb = document.getElementById("autoplay");
         cb.onchange = function () { return _this.updateAutoplay(_this); };
-        var btn = document.getElementById("connectbtn");
-        btn.onclick = function (ev) {_this.joinLobby();};
-        btn = document.getElementById("disconnectbtn");
+        //var btn = document.getElementById("connectbtn");
+        //btn.onclick = function (ev) {_this.joinLobby();};
+        var btn = document.getElementById("disconnectbtn");
         btn.onclick = function (ev) {
             _this.disconnect();
             return false;
@@ -342,11 +366,13 @@ var App = /** @class */ (function (_super) {
             //                this.myActor().setName(n.value);
             var id = "n:" + n.value;
             // clients set actors's id
+            //_this.joinRandomRoom();
             _this.createAppRoom(id);
         };
 
         btn = document.getElementById("joinRandomBtn");
         btn.onclick = function (ev) {
+            Output.log(this.myActor);
             _this.joinRandomRoom();
             return false;
         };
@@ -389,8 +415,8 @@ var App = /** @class */ (function (_super) {
     App.prototype.updateRoomButtons = function () {
         var btn;
         var connected = this.state != Photon.LoadBalancing.LoadBalancingClient.State.Uninitialized && this.state != Photon.LoadBalancing.LoadBalancingClient.State.Disconnected;
-        btn = document.getElementById("connectbtn");
-        btn.disabled = connected;
+        //btn = document.getElementById("connectbtn");
+        //btn.disabled = connected;
         btn = document.getElementById("fblogin");
         btn.disabled = connected;
         btn.hidden = !AppFbAppId;

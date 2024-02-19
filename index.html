@@ -65,19 +65,22 @@
         <div id="statetxt">
             undef
         </div>
-        <form>
+        <!--<form>
             Name:<input type="text" id="playername" />
             <input type="submit" value="Connect" id="connectbtn" autofocus="autofocus" />
-        </form>
+        </form>-->
         <form>
             Room:<input type="text" id="newroom" />
-            <input type="submit" value="Connect to Room" id="joinRoomBtn" autofocus="autofocus" />
-        </form>          
+        </form>
+        <button id="joinRoomBtn"> Connect to Room </button>          
         <div>
             <button id="fblogin" onclick="onFbLoginClick()">FB Login</button>
             <button id="disconnectbtn">Disconnect</button>
         </div>
          
+        <div id="roomsSlot">
+        </div>
+
         <button id="listRooms">List Rooms</button>
         <button id="joinRandomBtn">Join Random Room</button>
         <button id="newgame">New Game</button>
