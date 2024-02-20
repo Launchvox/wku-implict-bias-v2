@@ -126,9 +126,15 @@ export class Stack extends React.Component<Props & PropsFromState, State> {
       return null;
 
     const { preset } = this.props; 
+    
     const exposed = preset?.Exposed[widget.property];
     if (exposed)
+    {
       return widget.label || exposed.Metadata?.Description || exposed.DisplayName;
+    } else
+    {
+      console.log(exposed);
+    }
 
     return (
       <div className="unbound-property">

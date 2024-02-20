@@ -635,8 +635,8 @@ export class App extends React.Component<PropsFromState, State> {
       );
     }
 
-    if (!preset)
-      return <h1 className="fullscreen opaque">No Preset Available</h1>;
+    //if (!preset)
+      //return <h1 className="fullscreen opaque">No Preset Available</h1>;
 
     return null;
   }
@@ -671,13 +671,6 @@ export class App extends React.Component<PropsFromState, State> {
               <img src="/images/favicon/32x32.png" alt="Unreal Engine" />
             </div>
            
-            <div className="tab edit-tab mode-toggle">
-              <label className="switch toggle-mode">
-                <input type="checkbox" checked={!!editable} onChange={() => this.onSetTabsDrawer(!editable)} />
-                <span className="slider inline"></span>
-              </label>
-            </div>
-
             <Tabs preset={preset}
                   tabs={view.tabs}
                   selected={tab}

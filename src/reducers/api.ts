@@ -32,7 +32,7 @@ class staticIo {
     switch (event) {
       case "client":
          //Ian Berget, modifying to alway show connected.
-        this.trigger("connected",{ connected:true, version:"1.0.0" });
+        this.respond("connected",{ connected:true, version:"1.0.0" });
         break;
 
       case "view":
@@ -40,7 +40,8 @@ class staticIo {
         break;
     
       case "value":
-        console.log("value");
+        console.log("value:" + args);
+        this.respond('value', args);//Preset,Property,Value
         break;
 
       case "execute":
@@ -69,7 +70,7 @@ class staticIo {
     //Allow statement chaining.
     return this;
   }
-  trigger(event: string, ...args: any[]) : void 
+  respond(event: string, ...args: any[]) : void 
   {
     if(this.functions[event] != null && this.functions[event] != undefined)
     {
@@ -117,7 +118,6 @@ function _initialize(dispatch: Dispatch, getState: () => { api: ApiState }) {
     })
     .on('value', (preset: string, property: string, value: PropertyValue) => {
       dispatch(API.PAYLOADS_VALUE({ [preset]: { [property]: value }}));
-
       if (_preset === preset)
         dispatch(API.PAYLOAD({ [property]: value }));
     })
@@ -143,12 +143,14 @@ function _initialize(dispatch: Dispatch, getState: () => { api: ApiState }) {
       //Ian Berget: Forcing connected state
       dispatch(API.STATUS({ connected: true, isOpen: true, keyCorrect: true, version: "1.0.0" }));
       clearInterval(_pingInterval);
-      _socket.trigger('opened',{isOpen:true});
+      _socket.respond('opened',{isOpen:true});
     })
     .on('opened', (isOpen: boolean) => {
       dispatch(API.STATUS({ isOpen, loading: false }));
       _api.presets.get();
-      _api.payload.all();
+      
+      //Ian Berget: Commenting out until we can confirm how this influences the rendering process.
+      //_api.payload.all();
       //_pingInterval = setInterval(_api.ping, 1000); //Don't refresh
     })
     .on('loading', (loading: boolean) => {
@@ -316,7 +318,8 @@ export const _api = {
   payload: {
     get: (preset: string): Promise<IPayload> => _getPayload(preset, API.PAYLOAD),//_get(`/api/presets/payload?preset=${preset}`, API.PAYLOAD),
     all: (): Promise<IPayloads> => _get('/api/payloads', API.PAYLOADS),
-    set: (property: string, value: PropertyValue, historyPush = true) => {
+    //Ian Berget: Removing use of history.
+    set: (property: string, value: PropertyValue, historyPush = false) => {
       let { undo, redo, payloads } = _getState().api;
 
       if (historyPush) {

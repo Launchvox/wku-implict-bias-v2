@@ -171,17 +171,6 @@ export class Tabs extends React.Component<Props> {
           }
           <div className={leftTabClassName} onClick={() => this.onTabChange(selected - 1)}><FontAwesomeIcon icon={['fas', 'caret-left']} /></div>
           <div className={rightTabClassName} onClick={() => this.onTabChange(selected + 1)}><FontAwesomeIcon icon={['fas', 'caret-right']} /></div>
-          <div className="preset-undo-redo">
-            <span className={iconUndoClassName} onClick={_api.undoHistory}><FontAwesomeIcon icon={['fas', 'undo']} /></span>
-            <span className={iconRedoClassName} onClick={_api.redoHistory}><FontAwesomeIcon icon={['fas', 'redo']} /></span>
-          </div>
-          <div className="preset-name">{preset?.Name}</div>
-          <div className="tab edit-tab locked-toggle">
-            <label className="switch toggle-mode locked-mode">
-              <input type="checkbox" checked={!!locked} onChange={() => this.props.onLockedChange()} />
-              <span className="slider inline"></span>
-            </label>
-          </div>
         </div>
         
       </div>
