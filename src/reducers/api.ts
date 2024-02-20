@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { createAction, createReducer } from 'redux-act';
+import { SimpleActionCreator, createAction, createReducer } from 'redux-act';
 import dotProp from 'dot-prop-immutable';
 import io from 'socket.io-client';
 import { IAsset, IPayload, IPayloads, IPreset, IView, PropertyValue, TabLayout, IHistory, ConnectionSignal } from '../shared';
@@ -24,22 +24,83 @@ export type ApiState = {
   redo: IHistory[],
 };
 
+//Ian Berget: Created to allow for static hmtl IO integrating with Photon engine.
+class staticIo {
+  functions: { [id: string] : Function; } = {};
+
+  emit( event: string, ...args: any[] ) : void {
+    switch (event) {
+      case "client":
+         //Ian Berget, modifying to alway show connected.
+        this.trigger("connected",{ connected:true, version:"1.0.0" });
+        break;
+
+      case "view":
+        console.log("view");
+        break;
+    
+      case "value":
+        console.log("value");
+        break;
+
+      case "execute":
+        console.log("execute");
+        break;
+
+      case "metadata":
+        console.log("metadata");
+        break;
+
+      case "rebind":
+        console.log("rebind");
+        break;
+
+      case "search":
+        console.log("search");
+        break;
+    
+      default:
+        console.log("default");
+    }
+    _dispatch(API.STATUS(ConnectionSignal.Good));
+  }
+  on( event: string, fn: Function ) : staticIo  {
+    this.functions[event]=fn;
+    //Allow statement chaining.
+    return this;
+  }
+  trigger(event: string, ...args: any[]) : void 
+  {
+    if(this.functions[event] != null && this.functions[event] != undefined)
+    {
+        this.functions[event](args);
+    }
+    else{
+      console.warn("The event " + event + " was not found.");
+    }
+  }
+}
 
 let _preset;
 let _dispatch: Dispatch;
 let _getState: () => { api: ApiState };
-let _socket: SocketIOClient.Socket;
-let _passphrase: string;
+//Ian Berget: Removing socket, as we will instead use Photon for networking.
+let _socket: staticIo;
+//let _socket: SocketIOClient.Socket;
+/////////////////////////////////////
+//let _passphrase: string;
 let _pingInterval: NodeJS.Timeout;
 
-const _host = (process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:7001` : '');
+//Ian Berget: Modifying to allow access through static system.
+const _host = 'https://hdbbagmsb5.execute-api.us-east-1.amazonaws.com/prod';//(process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:7001` : '');
 
 function _initialize(dispatch: Dispatch, getState: () => { api: ApiState }) {
   _dispatch = dispatch;
   _getState = getState;
-  _passphrase = localStorage.getItem('passphrase'); 
+  //_passphrase = localStorage.getItem('passphrase'); 
 
-  _socket = io(`${_host}/`, { path: '/api/io' });
+  _socket = new staticIo();
+  //_socket = io(`${_host}/`, { path: '/api/io' });
 
   _socket
     .on('disconnect', () => {
@@ -72,26 +133,23 @@ function _initialize(dispatch: Dispatch, getState: () => { api: ApiState }) {
       dispatch(API.VIEW(view));
     })
     .on('connected', (connected: boolean, version: string) => {
-      dispatch(API.STATUS({ connected, version }));
       if (_pingInterval)
         clearInterval(_pingInterval);
       
       _pingInterval = null;
-      if (_passphrase !== null)
-        _api.passphrase.login(_passphrase);
+      //if (_passphrase !== null)
+      //  _api.passphrase.login(_passphrase);
+
+      //Ian Berget: Forcing connected state
+      dispatch(API.STATUS({ connected: true, isOpen: true, keyCorrect: true, version: "1.0.0" }));
+      clearInterval(_pingInterval);
+      _socket.trigger('opened',{isOpen:true});
     })
     .on('opened', (isOpen: boolean) => {
       dispatch(API.STATUS({ isOpen, loading: false }));
-
       _api.presets.get();
       _api.payload.all();
-      _pingInterval = setInterval(_api.ping, 1000);
-    })
-    .on('passphrase', (wrongPassphrase: string) => {
-      const isLoginStillCorrect = _passphrase !== wrongPassphrase && _passphrase !== undefined;
-      dispatch(API.STATUS({ keyCorrect: isLoginStillCorrect }));
-      if (!isLoginStillCorrect)
-        _passphrase = undefined;
+      //_pingInterval = setInterval(_api.ping, 1000); //Don't refresh
     })
     .on('loading', (loading: boolean) => {
       dispatch(API.STATUS({ loading }));
@@ -108,6 +166,9 @@ function _initialize(dispatch: Dispatch, getState: () => { api: ApiState }) {
 
       dispatch(API.STATUS({ signal }));
     });
+
+    //Ian Berget: Forcing initial ping within class itself
+    _socket.emit('client');
 }
 
 type IRequestCallback = Function | string | undefined;
@@ -120,7 +181,9 @@ async function _request(method: string, url: string, body: string | object | und
     request.body = JSON.stringify(body);
     request.headers['Content-Type'] = 'application/json';
   }
-  request.headers['passphrase'] = passphrase ?? _passphrase;
+
+  //Ian Berget: Disallowed by CORS
+  //request.headers['passphrase'] = passphrase ?? _passphrase;
 
   const res = await fetch(_host + url, request);
 
@@ -143,6 +206,29 @@ async function _request(method: string, url: string, body: string | object | und
 function _get(url: string, callback?: IRequestCallback, passphrase?: string)        { return _request('GET', url, undefined, callback, passphrase) };
 function _put(url: string, body: any, passphrase?: string)                          { return _request('PUT', url, body, undefined, passphrase) };
 
+
+//Ian Berget: Creating standins for get requests that don't require additional data.
+function _getPreset(presetId: string, callback?: IRequestCallback): Promise<IPreset>       
+{ 
+  return new Promise<IPreset>(function(resolve, reject) {
+    // some async operation here
+    setTimeout(function() {
+        // resolve the promise with some value
+        resolve(API.PRESETS[presetId]);
+    }, 1);
+  }); //Ian Berget: Forcing as async for parity with original API.
+};
+function _getPayload(presetId: string, callback?: IRequestCallback): Promise<IPayload>       
+{ 
+  return new Promise<IPayload>(function(resolve, reject) {
+    // some async operation here
+    setTimeout(function() {
+        // resolve the promise with some value
+        resolve(API.PAYLOAD[presetId]);
+    }, 1);
+  }); //Ian Berget: Forcing as async for parity with original API.
+};
+
 const API = {
   STATUS: createAction<any>('API_STATUS'),
   PRESETS: createAction<IPreset[]>('API_PRESETS'),
@@ -157,6 +243,7 @@ const API = {
 
 
 export const _api = {
+  //Ian Berget: Expanding initialize to include logic to mark the system as connected, as the API layer has been replaced.
   initialize: () => _initialize.bind(null),
   ping: () => _socket.emit('client', new Date().getTime()),
   lockUI: (locked: boolean) => _dispatch(API.LOCK_UI(locked)),
@@ -187,7 +274,7 @@ export const _api = {
 
   presets: {
     get: (): Promise<IPreset[]> => _get('/api/presets', API.PRESETS),
-    load: (id: string): Promise<IPreset> => _get(`/api/presets/${id}/load`),
+    load: (id: string): Promise<IPreset> => _getPreset(id),//_get(`/api/presets/${id}/load`),
     favorite: (id: string, value: boolean): Promise<IPreset> => _put(`/api/presets/${id}/favorite`, { value }),
     select: (preset?: IPreset) => {
       _api.presets.load(preset?.ID);
@@ -220,14 +307,14 @@ export const _api = {
         return false;
 
       localStorage.setItem('passphrase', passphrase);
-      _passphrase = passphrase;
+      //_passphrase = passphrase;
       _api.presets.get();
       _api.payload.all();
       return true;
     },
   },
   payload: {
-    get: (preset: string): Promise<IPayload> => _get(`/api/presets/payload?preset=${preset}`, API.PAYLOAD),
+    get: (preset: string): Promise<IPayload> => _getPayload(preset, API.PAYLOAD),//_get(`/api/presets/payload?preset=${preset}`, API.PAYLOAD),
     all: (): Promise<IPayloads> => _get('/api/payloads', API.PAYLOADS),
     set: (property: string, value: PropertyValue, historyPush = true) => {
       let { undo, redo, payloads } = _getState().api;

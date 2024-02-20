@@ -1,0 +1,43 @@
+{
+    "tabs": [
+        {
+            "name": "Sequences",
+            "layout": "Screen",
+            "icon": "play",
+            "screen": {
+                "type": "Sequencer"
+            }
+        },
+        {
+            "name": "Tab 1",
+            "icon": "ad",
+            "layout": "Stack",
+            "panels": [
+                {
+                    "type": "PANEL",
+                    "widgets": [
+                        {
+                            "property": "3E6215D14EF29C07E30A1B9161448045",
+                            "propertyType": "Function",
+                            "widget": "Button",
+                            "id": "daaf8b2a8242fba5c7d537c794f9ccc7"
+                        },
+                        {
+                            "property": "32C5A9B74997A8B01746EE9FEDF3A433",
+                            "propertyType": "TEnumAsByte<EServerLevels>",
+                            "widget": "Dropdown",
+                            "id": "83a38ddda0d2e1aee51a14ad7a2ff136"
+                        },
+                        {
+                            "property": "57EC247B4BBC11D5111E5383A75D9BAC",
+                            "propertyType": "Function",
+                            "widget": "Button",
+                            "id": "fdf482131e77d8e65f4ff065812a32c7"
+                        }
+                    ],
+                    "id": "307163aa6855e47d1595cb1c194ce3ad"
+                }
+            ]
+        }
+    ]
+}

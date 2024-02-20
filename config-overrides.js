@@ -29,9 +29,9 @@ module.exports = {
       return config;
     },
   ),
-  devServer: overrideDevServer(
+  /*devServer: overrideDevServer(
     (config) => ({ ...config, proxy: { 
       '/api': 'http://localhost:7001',
      } })
-  ),
+  ),*/
 };
