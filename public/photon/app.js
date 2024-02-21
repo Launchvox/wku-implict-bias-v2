@@ -368,6 +368,8 @@ var App = /** @class */ (function (_super) {
             var n = document.getElementById("newroom");
             //                this.myActor().setName(n.value);
             var id = "n:" + n.value;
+            //Preparing to access via Photon.
+            sessionStorage.photonRoom=id;
             // clients set actors's id
             //_this.joinRandomRoom();
             _this.createAppRoom(id);

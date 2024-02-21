@@ -12,9 +12,6 @@ var AppPlayer = /** @class */ (function (_super) {
         return this.getCustomProperty("name");
     };
     AppPlayer.prototype.onPropertiesChange = function (changedCustomProps) {
-        if (this.isLocal) {
-            document.title = this.getName() + " / " + this.getId() + " Pairs Game (Master Client)";
-        }
         this.App.updatePlayerOnlineList();
     };
     AppPlayer.prototype.setInfo = function (id, name) {

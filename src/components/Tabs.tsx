@@ -4,7 +4,7 @@ import { _api } from '../reducers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import { Droppable, Draggable, DraggableStateSnapshot } from 'react-beautiful-dnd';
-
+import DeprecatedCall from '../Call';
 
 type State = {
   allTabsVisible: boolean;
@@ -14,6 +14,9 @@ type Props = {
   preset: IPreset;
   tabs: ITab[];
   selected: number;
+    //IB: Including User ID
+    agoraUserID:string;
+    // IB: End of Additions
   editable?: boolean;
   locked: boolean;
   undo: boolean;
@@ -164,7 +167,7 @@ export class Tabs extends React.Component<Props> {
             )}
           </Droppable>
         </div>
-
+        <DeprecatedCall userID={this.props.agoraUserID}/>
         <div className="tab-navigation">
           {!!editable && 
             <div className="tab new-tab" onClick={() => this.props.onNewTab()}><FontAwesomeIcon icon={['fas', 'plus']} /></div>

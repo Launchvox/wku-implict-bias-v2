@@ -1,0 +1,36 @@
+.call {
+  text-align: center;
+}
+
+.player-container {
+  padding: 00px;
+  text-align: initial;
+}
+
+.button-group {
+  padding: 00px;
+}
+
+.call-form {
+  padding: 00px;
+  margin-bottom: 0px;
+}
+
+.voice-button {
+  background-color:#161616 !important;
+  display: flex;
+  align-items: center;
+  padding: 0px 20px 0px 20px;
+  color: #cdcccc;
+  min-width: 90px;
+  flex: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  cursor: pointer;
+  position: relative;
+  border: none !important;
+  border-radius:0px !important;
+  outline:none !important;
+}

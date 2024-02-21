@@ -29,6 +29,10 @@ type Props = {
   hoverTab: string;
   vector: ICustomStackProperty;
 
+  //IB: Added prop to pass downstream to buttons
+  agoraUserID: string;
+  // IB: End
+
   onSelected: (selected: string) => void;
   onSetVectorDrawer: (vector?: ICustomStackProperty) => void;
   getDroppableId: (id: string, path: string, accept: string[], type: string) => string;

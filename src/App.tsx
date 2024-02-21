@@ -43,6 +43,17 @@ const mapDispatchToProps = (dispatch): PropsFromState => ({
   initialize: async () => dispatch(_api.initialize()),
 });
 
+const characters ='0123456789';
+//IB: Range of number IDs is 0 - 10000
+// We will use the range 1-9999
+function generateAgoraUserID():string {
+// The maximum is exclusive and the minimum is inclusive
+    let min = Math.ceil(1);
+    let max = Math.floor(10000);
+    let result = Math.floor(Math.random() * (max - min) + min).toString(); 
+    return result;
+  }
+
 type DropElement = {
   id: string;
   path: string;
@@ -75,6 +86,10 @@ export class App extends React.Component<PropsFromState, State> {
     tab: 0,
     panel: 0,
   };
+
+  //IB: Store Custom User ID
+  agoraID = generateAgoraUserID();
+  // IB: End Custom State info
 
   appRef = React.createRef<HTMLDivElement>();
   panelRef = React.createRef<HTMLDivElement>();
@@ -572,7 +587,9 @@ export class App extends React.Component<PropsFromState, State> {
 
     return (
       <div ref={this.panelRef} className="panel" onClick={this.onResetSelection}>
-        <Stack panels={tab.panels}
+        <Stack 
+               agoraUserID={this.agoraID}
+               panels={tab.panels}
                editable={editable}
                visible={visible}
                dragging={dragging}
@@ -671,6 +688,7 @@ export class App extends React.Component<PropsFromState, State> {
             </div>
            
             <Tabs preset={preset}
+                  agoraUserID={this.agoraID}
                   tabs={view.tabs}
                   selected={tab}
                   onChange={this.onTabChange}
