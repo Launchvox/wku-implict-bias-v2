@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.24eae6c8.chunk.css",
+    "main.js": "/static/js/main.2884e9d3.chunk.js",
+    "main.js.map": "/static/js/main.2884e9d3.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.85a50424.js",
+    "runtime-main.js.map": "/static/js/runtime-main.85a50424.js.map",
+    "static/js/2.b48ea51d.chunk.js": "/static/js/2.b48ea51d.chunk.js",
+    "static/js/2.b48ea51d.chunk.js.map": "/static/js/2.b48ea51d.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.24eae6c8.chunk.css.map": "/static/css/main.24eae6c8.chunk.css.map",
+    "static/js/2.b48ea51d.chunk.js.LICENSE.txt": "/static/js/2.b48ea51d.chunk.js.LICENSE.txt",
+    "static/media/cc_icon.c50b3538.svg": "/static/media/cc_icon.c50b3538.svg",
+    "static/media/style.less": "/static/media/fa-solid-900.d824df7e.woff2",
+    "static/media/lc_icon.a55133d2.svg": "/static/media/lc_icon.a55133d2.svg",
+    "static/media/ue_logo.3bc5c470.svg": "/static/media/ue_logo.3bc5c470.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.85a50424.js",
+    "static/js/2.b48ea51d.chunk.js",
+    "static/css/main.24eae6c8.chunk.css",
+    "static/js/main.2884e9d3.chunk.js"
+  ]
+}
