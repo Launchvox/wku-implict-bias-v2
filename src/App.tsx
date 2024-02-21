@@ -7,7 +7,6 @@ import { fas, IconName } from '@fortawesome/free-solid-svg-icons';
 import { BeforeCapture, DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
-
 import './example/CustomWidget';
 
 

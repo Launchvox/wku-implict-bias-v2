@@ -29,7 +29,6 @@ export class DropdownWidget extends React.Component<Props> {
               )}
             </select>
           </div>
-          <FontAwesomeIcon icon={['fas', 'undo']} onClick={() => this.props.onChange?.()} />
         </div>
       </div>
     );

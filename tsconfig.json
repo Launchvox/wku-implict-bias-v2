@@ -24,6 +24,6 @@
     ]
   },
   "include": [
-    "src", "../Shared"
+    "src", "../Shared", "public/photon"  
   ]
 }

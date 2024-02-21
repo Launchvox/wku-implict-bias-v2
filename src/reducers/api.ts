@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import { SimpleActionCreator, createAction, createReducer } from 'redux-act';
 import dotProp from 'dot-prop-immutable';
-import io from 'socket.io-client';
+//import io from 'socket.io-client';
 import { IAsset, IPayload, IPayloads, IPreset, IView, PropertyValue, TabLayout, IHistory, ConnectionSignal } from '../shared';
 import _ from 'lodash';
 

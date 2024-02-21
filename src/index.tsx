@@ -8,7 +8,6 @@ import { App } from './App';
 import './styles/style.less';
 import './IconLibrary';
 
-
 const store = createStore(reducer, applyMiddleware(thunk));
 
 ReactDOM.render(

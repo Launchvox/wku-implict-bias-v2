@@ -6,9 +6,90 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/16x16.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+
+  <script type="text/javascript" src="/photon/easeljs.min.js"></script>
+  <script type="text/javascript" src="/photon/Photon-Javascript_SDK.js"></script>
+  <script type="text/javascript" src="/photon/cloud-app-info.js"></script>
+  <script type="text/javascript" src="/photon/globals.js"></script>
+  <script type="text/javascript" src="/photon/app.js"></script>
+  <script type="text/javascript" src="/photon/app-player.js"></script>
+  <script type="text/javascript" src="/photon/app-room.js"></script>
+  <script type="text/javascript" src="/photon/main-client.js"></script> 
+
 </head>
 <body>
   <div id="root"></div>
   <div id="modal"></div>
+
+  <div class="droppable droppable-panel  ">
+    <div class="draggable-item ">
+      <span tabindex="-1" role="button" draggable="false" class="drag-handle ">
+        <img src="/images/GripDotsBlocks.svg" alt="drag" class="grip-handle">
+      </span>
+    </div>
+      <div class="draggable-item buttons-list ">
+        
+        
+        
+        
+        <span class="drag-handle " tabindex="-1"><img src="/images/GripDotsBlocks.svg" alt="drag" class="grip-handle">
+        </span><div class="droppable multiline-widget-wrapper " data-type="Button">
+          
+          <div class="draggable-item btn-wrapper ">
+            <span class="drag-handle " tabindex="-1"><img src="/images/GripDotsBlocks.svg" alt="drag" class="grip-handle"></span>
+            <div class="widget-button-wrapper"><button class="widget-button">Load Scenario 2</button></div>
+          </div>
+
+          <div class="draggable-item btn-wrapper ">
+            <span class="drag-handle " tabindex="-1"><img src="/images/GripDotsBlocks.svg" alt="drag" class="grip-handle"></span>
+            <div class="widget-button-wrapper"><button class="widget-button">Load Scenario 2</button></div>
+          </div>
+          
+        </div>
+
+
+      </div>
+    </div>
+
+  <h1 id="info"></h1>
+  <input type="checkbox" id="autoplay" value="false"/>Autoplay
+  <canvas id="canvas" width="512" height="512" style="float: left; padding: 0 20px 0 0"></canvas>
+  <div>
+      <div id="statetxt">
+          undef
+      </div>
+      <!--<form>
+          Name:<input type="text" id="playername" />
+          <input type="submit" value="Connect" id="connectbtn" autofocus="autofocus" />
+      </form>-->
+      <form>
+          Room:<input type="text" id="newroom" />
+      </form>
+      <button id="joinRoomBtn"> Connect to Room </button>          
+      <div>
+          <button id="disconnectbtn">Disconnect</button>
+      </div>
+       
+      <div id="roomsSlot">
+      </div>
+      <button id="joinRandomBtn">Join Random Room</button>
+      <button id="newgame">New Game</button>
+      <button id="newtrivial">New Trivial</button>        
+      Next Player:
+      <div id="nextplayer"></div>
+      <br/>Players Online:
+      <ul id="playeronlinelist">
+          <li>none</li>
+      </ul>
+      <br/>Players in game (hover for details):
+      <ul id="players">
+          <li>none</li>
+      </ul>
+      <br/>Game State:
+      <div id="gamestate"></div>
+      <div id="log"></div>
+  </div>
+
+
 </body>
 </html>
