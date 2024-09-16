@@ -43,10 +43,8 @@ var MasterClient = /** @class */ (function () {
     MasterClient.prototype.cacheProps = function () {
         var room = this.client.myRoom();
         this.flushPropsFlag = false;
-        this.game = room.getCustomProperty("game");
+        this.game = room.getCustomProperty("game") || {};
         this.state = room.getCustomProperty("state") || {};
-        // websocket empty object send bug workaround
-        // TODO: remove after fix
         this.state = this.state || {};
         if (this.game) {
             this.game.players = this.game.players || new Array();
@@ -56,8 +54,6 @@ var MasterClient = /** @class */ (function () {
         //
     };
     MasterClient.prototype.flushProps = function () {
-        // websocket empty object send bug workaround
-        // TODO: remove after fix
         if (this.state && Object.keys(this.state).length == 0)
             this.state = null;
         if (this.game) {
@@ -75,8 +71,8 @@ var MasterClient = /** @class */ (function () {
         //        
         if (this.flushPropsFlag) {
             var room = this.client.myRoom();
-            room.setCustomProperty("game", this.game);
-            room.setCustomProperty("state", this.state);
+            room.setCustomProperty("game", this.game || {});
+            room.setCustomProperty("state", this.state || {});
         }
     };
     MasterClient.prototype.onJoinRoom = function () {
@@ -267,7 +263,7 @@ var MasterClient = /** @class */ (function () {
             this.logger.info("Updating player", id, "stats");
             this.UpdatePlayerStats(id, playersStats, playersData);
         }
-        room.setCustomProperty("playersStats", playersStats);
+        room.setCustomProperty("playersStats", playersStats || {});
     };
     MasterClient.prototype.UpdatePlayerStats = function (id, playersStats, playersData) {
         if (!playersStats[id]) {

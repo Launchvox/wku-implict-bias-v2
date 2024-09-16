@@ -73,15 +73,19 @@ var MasterClient = /** @class */ (function () {
             }
         }
         //        
-        if (this.flushPropsFlag) {
+        if (this.flushPropsFlag||true) {
             var room = this.client.myRoom();
-            room.setCustomProperty("game", this.game);
-            room.setCustomProperty("state", this.state);
+            room.setCustomProperty("game", 0);//this.game);
+            room.setCustomProperty("state", 0);//this.state);
+            console.log("Custom Props" + JSON.stringify(room.getCustomProperties()));
         }
     };
     MasterClient.prototype.onJoinRoom = function () {
         if (!this.isMaster())
+        {
+            this.flushProps();
             return;
+        }
         this.logger.debug("onJoinRoom");
         this.cacheProps();
         if (!this.game) {
@@ -267,7 +271,7 @@ var MasterClient = /** @class */ (function () {
             this.logger.info("Updating player", id, "stats");
             this.UpdatePlayerStats(id, playersStats, playersData);
         }
-        room.setCustomProperty("playersStats", playersStats);
+        room.setCustomProperty("playersStats", 0);//playersStats);
     };
     MasterClient.prototype.UpdatePlayerStats = function (id, playersStats, playersData) {
         if (!playersStats[id]) {

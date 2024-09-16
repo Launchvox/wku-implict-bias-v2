@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import reducer from './reducers';
-import { App } from './App';
+import { App } from './App_v2';
 import './styles/style.less';
 import './IconLibrary';
 

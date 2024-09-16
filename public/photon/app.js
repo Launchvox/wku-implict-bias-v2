@@ -374,6 +374,11 @@ var App = /** @class */ (function (_super) {
             //_this.joinRandomRoom();
             _this.createAppRoom(id);
         };
+        btn = document.getElementById("openLevelBtn");
+        btn.onclick = function (ev) {
+            var n = document.getElementById("newroom"); // TODO: Rename text field
+            _this.setCustomProperty("l",n);
+        };
 
         btn = document.getElementById("joinRandomBtn");
         btn.onclick = function (ev) {

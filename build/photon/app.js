@@ -382,6 +382,14 @@ var App = /** @class */ (function (_super) {
             return false;
         };
 
+        for (let index = 1; index <= 4; index++) {
+            btn = document.getElementById("scene"+index);
+            btn.onclick = function (ev) {
+                _this.setCustomProperty("scene",ev.button.id);
+                return false;
+            };   
+        }
+
         ///
         btn = document.getElementById("newgame");
         btn.onclick = function (ev) {
